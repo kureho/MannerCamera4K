@@ -59,7 +59,7 @@
 		822B56C4E381B423BAB6730B /* LensType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LensType.swift; sourceTree = "<group>"; };
 		88B003CEC55EB3BD77D3AA2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		88E5D16E5B8215F4B97747C6 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
-		8A8663F423A1319E87CBC40A /* MannerCamera4K.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MannerCamera4K.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A8663F423A1319E87CBC40A /* MannerCamera4K.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MannerCamera4K.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C914B0ECB8FE5A5E21B7A61 /* VideoCapturer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCapturer.swift; sourceTree = "<group>"; };
 		9CD889AA40AFCE6CECEC81D5 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		A7B6CB3EDA4924B5C1B09F56 /* DeviceCapabilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCapabilityTests.swift; sourceTree = "<group>"; };
@@ -223,8 +223,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1500;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = 78AB9F621DEA1CD5752FF2FF /* Build configuration list for PBXProject "MannerCamera4K" */;
 			developmentRegion = en;
@@ -311,6 +309,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L455WPL8QZ;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = MannerCamera4K/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -319,7 +318,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.MannerCamera4K;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Kureho.MannerCamera4K;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -332,6 +331,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L455WPL8QZ;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = MannerCamera4K/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -340,7 +340,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.MannerCamera4K;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Kureho.MannerCamera4K;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = 1;
