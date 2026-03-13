@@ -9,10 +9,12 @@
 /* Begin PBXBuildFile section */
 		21AEDDA330A2DB4BDA4A78EF /* CameraSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C47D7237801CDA2E7C380F4 /* CameraSettingsTests.swift */; };
 		2E92DEDB40BC1B11CE24098D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 039EDF8ABC641F7F4D2E4489 /* Assets.xcassets */; };
+		39727DBE4C41E716E7767432 /* DeviceCapability.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85FD6F7A028FE89402470C8 /* DeviceCapability.swift */; };
 		4215A789BEC5F9644552106A /* LensTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2E8935A11141DF8A4B05DC /* LensTypeTests.swift */; };
 		565917B1539E38C6415EF838 /* LensType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 822B56C4E381B423BAB6730B /* LensType.swift */; };
 		60E64FD90F4B7DA85BFB8F66 /* CameraMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C1995A8E2B7C951A6214D86 /* CameraMode.swift */; };
 		7C89E079A2C83DF272834599 /* CameraSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B9040C77F08E1AD42B25F0 /* CameraSettings.swift */; };
+		8EFEC6FC04CB6C4F32405A28 /* DeviceCapabilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B6CB3EDA4924B5C1B09F56 /* DeviceCapabilityTests.swift */; };
 		93B6E6CC5CFCEAE3B9198C6D /* CameraModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56894CE52640CB5B400BCB /* CameraModeTests.swift */; };
 		A331012E491F0257B4A85A5E /* MannerCamera4KApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB92C44BA503FA7D14D37106 /* MannerCamera4KApp.swift */; };
 		D6D3DA2593198D2AA2424905 /* CaptureState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5566D63EFA7B4F0CEDD027 /* CaptureState.swift */; };
@@ -39,6 +41,8 @@
 		822B56C4E381B423BAB6730B /* LensType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LensType.swift; sourceTree = "<group>"; };
 		88B003CEC55EB3BD77D3AA2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8A8663F423A1319E87CBC40A /* MannerCamera4K.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MannerCamera4K.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A7B6CB3EDA4924B5C1B09F56 /* DeviceCapabilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCapabilityTests.swift; sourceTree = "<group>"; };
+		A85FD6F7A028FE89402470C8 /* DeviceCapability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCapability.swift; sourceTree = "<group>"; };
 		BD2E8935A11141DF8A4B05DC /* LensTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LensTypeTests.swift; sourceTree = "<group>"; };
 		EB92C44BA503FA7D14D37106 /* MannerCamera4KApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MannerCamera4KApp.swift; sourceTree = "<group>"; };
 		EF73C554131AE08A7D5ABA48 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
@@ -70,6 +74,7 @@
 				ABC9727ABE71F0437C1AC589 /* App */,
 				995624795706B84214687853 /* Models */,
 				0BA86C8B69C7420A90D7C2CE /* Resources */,
+				6631F969D9296B6E193C4863 /* Utils */,
 				E3C4AFF933F3ADA7B617BFD3 /* Views */,
 			);
 			path = MannerCamera4K;
@@ -80,9 +85,18 @@
 			children = (
 				0A56894CE52640CB5B400BCB /* CameraModeTests.swift */,
 				7C47D7237801CDA2E7C380F4 /* CameraSettingsTests.swift */,
+				A7B6CB3EDA4924B5C1B09F56 /* DeviceCapabilityTests.swift */,
 				BD2E8935A11141DF8A4B05DC /* LensTypeTests.swift */,
 			);
 			path = MannerCamera4KTests;
+			sourceTree = "<group>";
+		};
+		6631F969D9296B6E193C4863 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				A85FD6F7A028FE89402470C8 /* DeviceCapability.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		995624795706B84214687853 /* Models */ = {
@@ -211,6 +225,7 @@
 				7C89E079A2C83DF272834599 /* CameraSettings.swift in Sources */,
 				F0C78ACD1510B80AB9C74ACB /* CameraView.swift in Sources */,
 				D6D3DA2593198D2AA2424905 /* CaptureState.swift in Sources */,
+				39727DBE4C41E716E7767432 /* DeviceCapability.swift in Sources */,
 				565917B1539E38C6415EF838 /* LensType.swift in Sources */,
 				A331012E491F0257B4A85A5E /* MannerCamera4KApp.swift in Sources */,
 			);
@@ -222,6 +237,7 @@
 			files = (
 				93B6E6CC5CFCEAE3B9198C6D /* CameraModeTests.swift in Sources */,
 				21AEDDA330A2DB4BDA4A78EF /* CameraSettingsTests.swift in Sources */,
+				8EFEC6FC04CB6C4F32405A28 /* DeviceCapabilityTests.swift in Sources */,
 				4215A789BEC5F9644552106A /* LensTypeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
