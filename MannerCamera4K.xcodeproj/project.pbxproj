@@ -23,6 +23,7 @@
 		D16B3B2A2D625F0C85AA419A /* SilentPhotoCapturer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2831D7ED571D6BFC832D077A /* SilentPhotoCapturer.swift */; };
 		D6D3DA2593198D2AA2424905 /* CaptureState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5566D63EFA7B4F0CEDD027 /* CaptureState.swift */; };
 		F0C78ACD1510B80AB9C74ACB /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF73C554131AE08A7D5ABA48 /* CameraView.swift */; };
+		FF601F9ACD485F4D8FF365EB /* VideoCapturer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C914B0ECB8FE5A5E21B7A61 /* VideoCapturer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,7 @@
 		88B003CEC55EB3BD77D3AA2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		88E5D16E5B8215F4B97747C6 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		8A8663F423A1319E87CBC40A /* MannerCamera4K.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MannerCamera4K.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C914B0ECB8FE5A5E21B7A61 /* VideoCapturer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCapturer.swift; sourceTree = "<group>"; };
 		A7B6CB3EDA4924B5C1B09F56 /* DeviceCapabilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCapabilityTests.swift; sourceTree = "<group>"; };
 		A85FD6F7A028FE89402470C8 /* DeviceCapability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCapability.swift; sourceTree = "<group>"; };
 		BD2E8935A11141DF8A4B05DC /* LensTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LensTypeTests.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 			children = (
 				88E5D16E5B8215F4B97747C6 /* CameraManager.swift */,
 				2831D7ED571D6BFC832D077A /* SilentPhotoCapturer.swift */,
+				8C914B0ECB8FE5A5E21B7A61 /* VideoCapturer.swift */,
 			);
 			path = Camera;
 			sourceTree = "<group>";
@@ -252,6 +255,7 @@
 				BBFA9A4907E7AA2EF1E172E1 /* PhotoLibraryManager.swift in Sources */,
 				D16B3B2A2D625F0C85AA419A /* SilentPhotoCapturer.swift in Sources */,
 				8679ECD63441312C4C358428 /* StorageChecker.swift in Sources */,
+				FF601F9ACD485F4D8FF365EB /* VideoCapturer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

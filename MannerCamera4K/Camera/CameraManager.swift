@@ -201,6 +201,64 @@ final class CameraManager: NSObject {
         }
     }
 
+    // MARK: - Video Recording
+    private var _currentVideoCapturer: VideoCapturer?
+
+    func startRecording(settings: CameraSettings) {
+        guard captureState == .idle else { return }
+
+        guard StorageChecker.hasEnoughStorage() else {
+            showStorageAlert = true
+            return
+        }
+
+        VideoCapturer.configureAudioSession()
+
+        let capturer = VideoCapturer(movieOutput: movieOutput, session: session)
+        _ = capturer.startRecording(
+            resolution: settings.videoResolution,
+            recordAudio: settings.recordAudio
+        )
+
+        captureState = .recording
+        recordingDuration = 0
+        _currentVideoCapturer = capturer
+
+        recordingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.recordingDuration += 0.1
+            }
+        }
+    }
+
+    func stopRecording() {
+        guard captureState == .recording, let capturer = _currentVideoCapturer else { return }
+
+        recordingTimer?.invalidate()
+        recordingTimer = nil
+
+        Task {
+            do {
+                let url = try await capturer.stopRecording()
+                try await PhotoLibraryManager.saveVideo(at: url)
+                try? FileManager.default.removeItem(at: url)
+            } catch {
+                print("Video save error: \(error)")
+            }
+            await MainActor.run {
+                self.captureState = .idle
+                self.recordingDuration = 0
+                self.sessionQueue.async {
+                    self.session.beginConfiguration()
+                    self.session.sessionPreset = .photo
+                    self.session.commitConfiguration()
+                }
+            }
+        }
+
+        _currentVideoCapturer = nil
+    }
+
     // MARK: - Flash
     func toggleFlash() {
         isFlashEnabled.toggle()
