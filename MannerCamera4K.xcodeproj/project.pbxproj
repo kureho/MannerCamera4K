@@ -10,6 +10,7 @@
 		21AEDDA330A2DB4BDA4A78EF /* CameraSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C47D7237801CDA2E7C380F4 /* CameraSettingsTests.swift */; };
 		2E92DEDB40BC1B11CE24098D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 039EDF8ABC641F7F4D2E4489 /* Assets.xcassets */; };
 		39727DBE4C41E716E7767432 /* DeviceCapability.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85FD6F7A028FE89402470C8 /* DeviceCapability.swift */; };
+		3F762F75B1016FA0CD2E20EB /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E5D16E5B8215F4B97747C6 /* CameraManager.swift */; };
 		4215A789BEC5F9644552106A /* LensTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2E8935A11141DF8A4B05DC /* LensTypeTests.swift */; };
 		565917B1539E38C6415EF838 /* LensType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 822B56C4E381B423BAB6730B /* LensType.swift */; };
 		60E64FD90F4B7DA85BFB8F66 /* CameraMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C1995A8E2B7C951A6214D86 /* CameraMode.swift */; };
@@ -40,6 +41,7 @@
 		7C47D7237801CDA2E7C380F4 /* CameraSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSettingsTests.swift; sourceTree = "<group>"; };
 		822B56C4E381B423BAB6730B /* LensType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LensType.swift; sourceTree = "<group>"; };
 		88B003CEC55EB3BD77D3AA2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		88E5D16E5B8215F4B97747C6 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		8A8663F423A1319E87CBC40A /* MannerCamera4K.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MannerCamera4K.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7B6CB3EDA4924B5C1B09F56 /* DeviceCapabilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCapabilityTests.swift; sourceTree = "<group>"; };
 		A85FD6F7A028FE89402470C8 /* DeviceCapability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCapability.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 			children = (
 				88B003CEC55EB3BD77D3AA2F /* Info.plist */,
 				ABC9727ABE71F0437C1AC589 /* App */,
+				828D4159AE4FB19205C10117 /* Camera */,
 				995624795706B84214687853 /* Models */,
 				0BA86C8B69C7420A90D7C2CE /* Resources */,
 				6631F969D9296B6E193C4863 /* Utils */,
@@ -97,6 +100,14 @@
 				A85FD6F7A028FE89402470C8 /* DeviceCapability.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		828D4159AE4FB19205C10117 /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				88E5D16E5B8215F4B97747C6 /* CameraManager.swift */,
+			);
+			path = Camera;
 			sourceTree = "<group>";
 		};
 		995624795706B84214687853 /* Models */ = {
@@ -221,6 +232,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F762F75B1016FA0CD2E20EB /* CameraManager.swift in Sources */,
 				60E64FD90F4B7DA85BFB8F66 /* CameraMode.swift in Sources */,
 				7C89E079A2C83DF272834599 /* CameraSettings.swift in Sources */,
 				F0C78ACD1510B80AB9C74ACB /* CameraView.swift in Sources */,
