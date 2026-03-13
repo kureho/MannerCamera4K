@@ -1,0 +1,438 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2E92DEDB40BC1B11CE24098D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 039EDF8ABC641F7F4D2E4489 /* Assets.xcassets */; };
+		82D5DE646669F1515888024C /* MannerCamera4KTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE9052E41387BABD09164DED /* MannerCamera4KTests.swift */; };
+		A331012E491F0257B4A85A5E /* MannerCamera4KApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB92C44BA503FA7D14D37106 /* MannerCamera4KApp.swift */; };
+		F0C78ACD1510B80AB9C74ACB /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF73C554131AE08A7D5ABA48 /* CameraView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D4D823DED64912D7A6323164 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F56D910EC54D03FA927D5CDD /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EE5C9417AEDABFF680EA6152;
+			remoteInfo = MannerCamera4K;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		039EDF8ABC641F7F4D2E4489 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1BFA4ED59D2C6ED2A349374B /* MannerCamera4KTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MannerCamera4KTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		88B003CEC55EB3BD77D3AA2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8A8663F423A1319E87CBC40A /* MannerCamera4K.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MannerCamera4K.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB92C44BA503FA7D14D37106 /* MannerCamera4KApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MannerCamera4KApp.swift; sourceTree = "<group>"; };
+		EF73C554131AE08A7D5ABA48 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		FE9052E41387BABD09164DED /* MannerCamera4KTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MannerCamera4KTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0BA86C8B69C7420A90D7C2CE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				039EDF8ABC641F7F4D2E4489 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		1CDFAA5DC43F0C253AB21650 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8A8663F423A1319E87CBC40A /* MannerCamera4K.app */,
+				1BFA4ED59D2C6ED2A349374B /* MannerCamera4KTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		589DACA2CFE11EB5EB980173 /* MannerCamera4K */ = {
+			isa = PBXGroup;
+			children = (
+				88B003CEC55EB3BD77D3AA2F /* Info.plist */,
+				ABC9727ABE71F0437C1AC589 /* App */,
+				0BA86C8B69C7420A90D7C2CE /* Resources */,
+				E3C4AFF933F3ADA7B617BFD3 /* Views */,
+			);
+			path = MannerCamera4K;
+			sourceTree = "<group>";
+		};
+		5AF0BE75859B542A54DE983D /* MannerCamera4KTests */ = {
+			isa = PBXGroup;
+			children = (
+				FE9052E41387BABD09164DED /* MannerCamera4KTests.swift */,
+			);
+			path = MannerCamera4KTests;
+			sourceTree = "<group>";
+		};
+		9A3FD13189F84B46CCD6BB56 = {
+			isa = PBXGroup;
+			children = (
+				589DACA2CFE11EB5EB980173 /* MannerCamera4K */,
+				5AF0BE75859B542A54DE983D /* MannerCamera4KTests */,
+				1CDFAA5DC43F0C253AB21650 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		ABC9727ABE71F0437C1AC589 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				EB92C44BA503FA7D14D37106 /* MannerCamera4KApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E3C4AFF933F3ADA7B617BFD3 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				EF73C554131AE08A7D5ABA48 /* CameraView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C1C9EA1A8BD2715EC8E53B60 /* MannerCamera4KTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D4E669815EF820D483AFB806 /* Build configuration list for PBXNativeTarget "MannerCamera4KTests" */;
+			buildPhases = (
+				FBB7E858611045C2617B06B3 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5B5AD00C4C7C890B0AD12498 /* PBXTargetDependency */,
+			);
+			name = MannerCamera4KTests;
+			packageProductDependencies = (
+			);
+			productName = MannerCamera4KTests;
+			productReference = 1BFA4ED59D2C6ED2A349374B /* MannerCamera4KTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		EE5C9417AEDABFF680EA6152 /* MannerCamera4K */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 747C47632103BE3582B58762 /* Build configuration list for PBXNativeTarget "MannerCamera4K" */;
+			buildPhases = (
+				EE7BA7D8292A5A4AF2DCF2B5 /* Sources */,
+				123D931270641DE516DBA342 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MannerCamera4K;
+			packageProductDependencies = (
+			);
+			productName = MannerCamera4K;
+			productReference = 8A8663F423A1319E87CBC40A /* MannerCamera4K.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F56D910EC54D03FA927D5CDD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 78AB9F621DEA1CD5752FF2FF /* Build configuration list for PBXProject "MannerCamera4K" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 9A3FD13189F84B46CCD6BB56;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 1CDFAA5DC43F0C253AB21650 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EE5C9417AEDABFF680EA6152 /* MannerCamera4K */,
+				C1C9EA1A8BD2715EC8E53B60 /* MannerCamera4KTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		123D931270641DE516DBA342 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2E92DEDB40BC1B11CE24098D /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EE7BA7D8292A5A4AF2DCF2B5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F0C78ACD1510B80AB9C74ACB /* CameraView.swift in Sources */,
+				A331012E491F0257B4A85A5E /* MannerCamera4KApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FBB7E858611045C2617B06B3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				82D5DE646669F1515888024C /* MannerCamera4KTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5B5AD00C4C7C890B0AD12498 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EE5C9417AEDABFF680EA6152 /* MannerCamera4K */;
+			targetProxy = D4D823DED64912D7A6323164 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4BA061122AAFDE19958F7803 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MannerCamera4K/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MannerCamera4K;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		5665C58C5318BA78886CEDBD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = MannerCamera4K/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MannerCamera4K;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		6342373D25B34DCDFFDA612B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		8169A4C486A0DC4E8355E6D6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C70B65409ECA1B790A32F803 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MannerCamera4KTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MannerCamera4K.app/MannerCamera4K";
+			};
+			name = Release;
+		};
+		CA86CEDEE18825F76F68B97C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.MannerCamera4KTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MannerCamera4K.app/MannerCamera4K";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		747C47632103BE3582B58762 /* Build configuration list for PBXNativeTarget "MannerCamera4K" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5665C58C5318BA78886CEDBD /* Debug */,
+				4BA061122AAFDE19958F7803 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		78AB9F621DEA1CD5752FF2FF /* Build configuration list for PBXProject "MannerCamera4K" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8169A4C486A0DC4E8355E6D6 /* Debug */,
+				6342373D25B34DCDFFDA612B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D4E669815EF820D483AFB806 /* Build configuration list for PBXNativeTarget "MannerCamera4KTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CA86CEDEE18825F76F68B97C /* Debug */,
+				C70B65409ECA1B790A32F803 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F56D910EC54D03FA927D5CDD /* Project object */;
+}
