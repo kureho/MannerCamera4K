@@ -15,9 +15,12 @@
 		565917B1539E38C6415EF838 /* LensType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 822B56C4E381B423BAB6730B /* LensType.swift */; };
 		60E64FD90F4B7DA85BFB8F66 /* CameraMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C1995A8E2B7C951A6214D86 /* CameraMode.swift */; };
 		7C89E079A2C83DF272834599 /* CameraSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43B9040C77F08E1AD42B25F0 /* CameraSettings.swift */; };
+		8679ECD63441312C4C358428 /* StorageChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0F0F81341F644BC4EE37E8 /* StorageChecker.swift */; };
 		8EFEC6FC04CB6C4F32405A28 /* DeviceCapabilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B6CB3EDA4924B5C1B09F56 /* DeviceCapabilityTests.swift */; };
 		93B6E6CC5CFCEAE3B9198C6D /* CameraModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A56894CE52640CB5B400BCB /* CameraModeTests.swift */; };
 		A331012E491F0257B4A85A5E /* MannerCamera4KApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB92C44BA503FA7D14D37106 /* MannerCamera4KApp.swift */; };
+		BBFA9A4907E7AA2EF1E172E1 /* PhotoLibraryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B218031607576ED6FDFBCB /* PhotoLibraryManager.swift */; };
+		D16B3B2A2D625F0C85AA419A /* SilentPhotoCapturer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2831D7ED571D6BFC832D077A /* SilentPhotoCapturer.swift */; };
 		D6D3DA2593198D2AA2424905 /* CaptureState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5566D63EFA7B4F0CEDD027 /* CaptureState.swift */; };
 		F0C78ACD1510B80AB9C74ACB /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF73C554131AE08A7D5ABA48 /* CameraView.swift */; };
 /* End PBXBuildFile section */
@@ -33,9 +36,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		02B218031607576ED6FDFBCB /* PhotoLibraryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryManager.swift; sourceTree = "<group>"; };
 		039EDF8ABC641F7F4D2E4489 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A56894CE52640CB5B400BCB /* CameraModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraModeTests.swift; sourceTree = "<group>"; };
 		1BFA4ED59D2C6ED2A349374B /* MannerCamera4KTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MannerCamera4KTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2831D7ED571D6BFC832D077A /* SilentPhotoCapturer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SilentPhotoCapturer.swift; sourceTree = "<group>"; };
 		3C1995A8E2B7C951A6214D86 /* CameraMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraMode.swift; sourceTree = "<group>"; };
 		43B9040C77F08E1AD42B25F0 /* CameraSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSettings.swift; sourceTree = "<group>"; };
 		7C47D7237801CDA2E7C380F4 /* CameraSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSettingsTests.swift; sourceTree = "<group>"; };
@@ -46,6 +51,7 @@
 		A7B6CB3EDA4924B5C1B09F56 /* DeviceCapabilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCapabilityTests.swift; sourceTree = "<group>"; };
 		A85FD6F7A028FE89402470C8 /* DeviceCapability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCapability.swift; sourceTree = "<group>"; };
 		BD2E8935A11141DF8A4B05DC /* LensTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LensTypeTests.swift; sourceTree = "<group>"; };
+		DD0F0F81341F644BC4EE37E8 /* StorageChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageChecker.swift; sourceTree = "<group>"; };
 		EB92C44BA503FA7D14D37106 /* MannerCamera4KApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MannerCamera4KApp.swift; sourceTree = "<group>"; };
 		EF73C554131AE08A7D5ABA48 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		FB5566D63EFA7B4F0CEDD027 /* CaptureState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureState.swift; sourceTree = "<group>"; };
@@ -98,6 +104,8 @@
 			isa = PBXGroup;
 			children = (
 				A85FD6F7A028FE89402470C8 /* DeviceCapability.swift */,
+				02B218031607576ED6FDFBCB /* PhotoLibraryManager.swift */,
+				DD0F0F81341F644BC4EE37E8 /* StorageChecker.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -106,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				88E5D16E5B8215F4B97747C6 /* CameraManager.swift */,
+				2831D7ED571D6BFC832D077A /* SilentPhotoCapturer.swift */,
 			);
 			path = Camera;
 			sourceTree = "<group>";
@@ -240,6 +249,9 @@
 				39727DBE4C41E716E7767432 /* DeviceCapability.swift in Sources */,
 				565917B1539E38C6415EF838 /* LensType.swift in Sources */,
 				A331012E491F0257B4A85A5E /* MannerCamera4KApp.swift in Sources */,
+				BBFA9A4907E7AA2EF1E172E1 /* PhotoLibraryManager.swift in Sources */,
+				D16B3B2A2D625F0C85AA419A /* SilentPhotoCapturer.swift in Sources */,
+				8679ECD63441312C4C358428 /* StorageChecker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

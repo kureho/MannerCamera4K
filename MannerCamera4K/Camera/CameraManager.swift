@@ -168,6 +168,39 @@ final class CameraManager: NSObject {
         }
     }
 
+    // MARK: - Photo Capture
+    func capturePhoto(settings: CameraSettings) {
+        guard captureState == .idle else { return }
+
+        guard StorageChecker.hasEnoughStorage() else {
+            showStorageAlert = true
+            return
+        }
+
+        captureState = .capturing
+
+        let capturer = SilentPhotoCapturer(
+            photoOutput: photoOutput,
+            settings: settings,
+            currentDevice: currentDevice,
+            currentLens: currentLens,
+            cameraPosition: currentPosition
+        )
+
+        Task {
+            do {
+                try await capturer.capturePhoto(
+                    flashEnabled: isFlashEnabled,
+                    nightMode: isNightModeEnabled
+                )
+                await MainActor.run { self.captureState = .idle }
+            } catch {
+                print("Photo capture error: \(error)")
+                await MainActor.run { self.captureState = .idle }
+            }
+        }
+    }
+
     // MARK: - Flash
     func toggleFlash() {
         isFlashEnabled.toggle()
