@@ -83,7 +83,7 @@ struct CameraControlsOverlay: View {
                 if camera.currentMode == .video && camera.captureState == .recording {
                     recordingTimeLabel
                 } else {
-                    Color.clear.frame(width: 60, height: 44)
+                    Color.clear.frame(width: 100, height: 44)
                 }
 
                 Spacer()
@@ -102,7 +102,7 @@ struct CameraControlsOverlay: View {
                     Image(systemName: "camera.rotate")
                         .font(.title2)
                         .foregroundStyle(.white)
-                        .frame(width: 60, height: 44)
+                        .frame(width: 100, height: 44)
                 }
                 // Important 13: 録画中はカメラ切替を無効化
                 .disabled(camera.captureState == .recording)

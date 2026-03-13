@@ -1,4 +1,5 @@
 import AVFoundation
+import Photos
 import SwiftUI
 
 @Observable
@@ -22,10 +23,15 @@ final class CameraManager: NSObject {
     private var deviceInput: AVCaptureDeviceInput?
     let photoOutput = AVCapturePhotoOutput()
     let movieOutput = AVCaptureMovieFileOutput()
+    let videoDataOutput = AVCaptureVideoDataOutput()
     private let sessionQueue = DispatchQueue(label: "camera.session.queue")
+    private let videoDataQueue = DispatchQueue(label: "camera.videodata.queue")
 
     private var recordingTimer: Timer?
     private let nightModeProcessor = NightModeProcessor()
+
+    // 無音フレームキャプチャ用
+    private var frameCaptureCompletion: ((CMSampleBuffer) -> Void)?
 
     // MARK: - Setup
     func checkPermission() {
@@ -33,12 +39,14 @@ final class CameraManager: NSObject {
         case .authorized:
             isCameraPermissionGranted = true
             sessionQueue.async { self.setupSession() }
+            PHPhotoLibrary.requestAuthorization(for: .addOnly) { _ in }
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 Task { @MainActor in
                     self.isCameraPermissionGranted = granted
                     if granted {
                         self.sessionQueue.async { self.setupSession() }
+                        PHPhotoLibrary.requestAuthorization(for: .addOnly) { _ in }
                     }
                 }
             }
@@ -63,9 +71,21 @@ final class CameraManager: NSObject {
             currentDevice = device
         }
 
+        // PhotoOutput（48MP対応 — 有音撮影のフォールバック用に残す）
         if session.canAddOutput(photoOutput) {
             session.addOutput(photoOutput)
             photoOutput.maxPhotoQualityPrioritization = .quality
+            let supported = device.activeFormat.supportedMaxPhotoDimensions
+            if let maxDim = supported.max(by: { Int($0.width) * Int($0.height) < Int($1.width) * Int($1.height) }) {
+                photoOutput.maxPhotoDimensions = maxDim
+            }
+        }
+
+        // VideoDataOutput（無音フレームキャプチャ用）
+        videoDataOutput.setSampleBufferDelegate(self, queue: videoDataQueue)
+        videoDataOutput.alwaysDiscardsLateVideoFrames = true
+        if session.canAddOutput(videoDataOutput) {
+            session.addOutput(videoDataOutput)
         }
 
         if session.canAddOutput(movieOutput) {
@@ -79,7 +99,6 @@ final class CameraManager: NSObject {
             self.availableLenses = DeviceCapability.availableLenses(for: self.currentPosition)
         }
 
-        // Important 5: セッション中断通知の追加
         NotificationCenter.default.addObserver(
             forName: .AVCaptureSessionWasInterrupted,
             object: session,
@@ -190,7 +209,7 @@ final class CameraManager: NSObject {
         }
     }
 
-    // MARK: - Photo Capture
+    // MARK: - Silent Photo Capture (VideoDataOutput frame grab)
     func capturePhoto(settings: CameraSettings) {
         guard captureState == .idle else { return }
 
@@ -201,28 +220,62 @@ final class CameraManager: NSObject {
 
         captureState = .capturing
 
-        // Critical 1: nightModeEnabled と nightModeProcessor を SilentPhotoCapturer に渡す
-        let capturer = SilentPhotoCapturer(
-            photoOutput: photoOutput,
-            settings: settings,
-            currentDevice: currentDevice,
-            currentLens: currentLens,
-            cameraPosition: currentPosition,
-            nightModeEnabled: isNightModeEnabled,
-            nightModeProcessor: nightModeProcessor
-        )
+        // フラッシュ: トーチで代用
+        if isFlashEnabled, let device = currentDevice, device.hasTorch {
+            try? device.lockForConfiguration()
+            device.torchMode = .on
+            device.unlockForConfiguration()
+        }
 
-        Task {
-            do {
-                try await capturer.capturePhoto(
-                    flashEnabled: isFlashEnabled,
-                    nightMode: isNightModeEnabled
-                )
-                await MainActor.run { self.captureState = .idle }
-            } catch {
-                print("Photo capture error: \(error)")
+        // 次のビデオフレームをキャプチャ
+        frameCaptureCompletion = { [weak self] sampleBuffer in
+            guard let self else { return }
+            self.frameCaptureCompletion = nil
+
+            // トーチOFF
+            if self.isFlashEnabled, let device = self.currentDevice, device.hasTorch {
+                try? device.lockForConfiguration()
+                device.torchMode = .off
+                device.unlockForConfiguration()
+            }
+
+            // フレームを画像データに変換
+            guard let imageData = self.imageDataFromSampleBuffer(sampleBuffer, settings: settings) else {
+                Task { @MainActor in self.captureState = .idle }
+                return
+            }
+
+            // ナイトモード処理
+            let finalData: Data
+            if self.isNightModeEnabled, let processed = self.nightModeProcessor.processImage(imageData) {
+                finalData = processed
+            } else {
+                finalData = imageData
+            }
+
+            // 保存
+            Task {
+                do {
+                    try await PhotoLibraryManager.savePhoto(finalData)
+                } catch {
+                    print("Photo save error: \(error)")
+                }
                 await MainActor.run { self.captureState = .idle }
             }
+        }
+    }
+
+    private func imageDataFromSampleBuffer(_ sampleBuffer: CMSampleBuffer, settings: CameraSettings) -> Data? {
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return nil }
+        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+        let context = CIContext()
+        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return nil }
+        let uiImage = UIImage(cgImage: cgImage)
+
+        if settings.photoFormat == .heif {
+            return uiImage.heicData() ?? uiImage.jpegData(compressionQuality: 0.95)
+        } else {
+            return uiImage.jpegData(compressionQuality: 0.95)
         }
     }
 
@@ -237,7 +290,6 @@ final class CameraManager: NSObject {
             return
         }
 
-        // Critical 3: マイク権限が未決定の場合は先にリクエストしてからdeadlock回避
         if settings.recordAudio && AVCaptureDevice.authorizationStatus(for: .audio) == .notDetermined {
             AVCaptureDevice.requestAccess(for: .audio) { _ in
                 Task { @MainActor in
@@ -250,6 +302,9 @@ final class CameraManager: NSObject {
     }
 
     private func beginRecording(settings: CameraSettings) {
+        // 録画中はビデオデータ出力を無効化（MovieFileOutputとの競合防止）
+        videoDataOutput.setSampleBufferDelegate(nil, queue: nil)
+
         VideoCapturer.configureAudioSession()
         let capturer = VideoCapturer(movieOutput: movieOutput, session: session)
         _ = capturer.startRecording(resolution: settings.videoResolution, recordAudio: settings.recordAudio)
@@ -284,6 +339,8 @@ final class CameraManager: NSObject {
                     self.session.beginConfiguration()
                     self.session.sessionPreset = .photo
                     self.session.commitConfiguration()
+                    // 録画終了後にビデオデータ出力を再有効化
+                    self.videoDataOutput.setSampleBufferDelegate(self, queue: self.videoDataQueue)
                 }
             }
         }
@@ -324,6 +381,16 @@ final class CameraManager: NSObject {
             if self.session.isRunning {
                 self.session.stopRunning()
             }
+        }
+    }
+}
+
+// MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
+extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        // フレームキャプチャ要求がある場合のみ処理
+        if let completion = frameCaptureCompletion {
+            completion(sampleBuffer)
         }
     }
 }

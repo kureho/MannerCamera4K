@@ -32,6 +32,8 @@ struct ShutterButton: View {
                     }
                 }
             }
+            .frame(width: 72, height: 72)
         }
+        .frame(width: 72, height: 72)
     }
 }
