@@ -25,6 +25,7 @@ final class CameraManager: NSObject {
     private let sessionQueue = DispatchQueue(label: "camera.session.queue")
 
     private var recordingTimer: Timer?
+    private let nightModeProcessor = NightModeProcessor()
 
     // MARK: - Setup
     func checkPermission() {
@@ -262,6 +263,20 @@ final class CameraManager: NSObject {
     // MARK: - Flash
     func toggleFlash() {
         isFlashEnabled.toggle()
+    }
+
+    // MARK: - Night Mode
+    func toggleNightMode() {
+        isNightModeEnabled.toggle()
+        guard let device = currentDevice else { return }
+
+        sessionQueue.async {
+            if self.isNightModeEnabled {
+                self.nightModeProcessor.configureDevice(device)
+            } else {
+                self.nightModeProcessor.resetDevice(device)
+            }
+        }
     }
 
     // MARK: - Session Lifecycle

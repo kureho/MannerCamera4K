@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1BA62D588616E0C9C40E05D7 /* NightModeProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6AE2B907F8BC93600B6BFB /* NightModeProcessor.swift */; };
 		21AEDDA330A2DB4BDA4A78EF /* CameraSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C47D7237801CDA2E7C380F4 /* CameraSettingsTests.swift */; };
 		2E92DEDB40BC1B11CE24098D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 039EDF8ABC641F7F4D2E4489 /* Assets.xcassets */; };
 		39727DBE4C41E716E7767432 /* DeviceCapability.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85FD6F7A028FE89402470C8 /* DeviceCapability.swift */; };
@@ -42,6 +43,7 @@
 		0A56894CE52640CB5B400BCB /* CameraModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraModeTests.swift; sourceTree = "<group>"; };
 		1BFA4ED59D2C6ED2A349374B /* MannerCamera4KTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MannerCamera4KTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2831D7ED571D6BFC832D077A /* SilentPhotoCapturer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SilentPhotoCapturer.swift; sourceTree = "<group>"; };
+		2A6AE2B907F8BC93600B6BFB /* NightModeProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NightModeProcessor.swift; sourceTree = "<group>"; };
 		3C1995A8E2B7C951A6214D86 /* CameraMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraMode.swift; sourceTree = "<group>"; };
 		43B9040C77F08E1AD42B25F0 /* CameraSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSettings.swift; sourceTree = "<group>"; };
 		7C47D7237801CDA2E7C380F4 /* CameraSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraSettingsTests.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				88E5D16E5B8215F4B97747C6 /* CameraManager.swift */,
+				2A6AE2B907F8BC93600B6BFB /* NightModeProcessor.swift */,
 				2831D7ED571D6BFC832D077A /* SilentPhotoCapturer.swift */,
 				8C914B0ECB8FE5A5E21B7A61 /* VideoCapturer.swift */,
 			);
@@ -252,6 +255,7 @@
 				39727DBE4C41E716E7767432 /* DeviceCapability.swift in Sources */,
 				565917B1539E38C6415EF838 /* LensType.swift in Sources */,
 				A331012E491F0257B4A85A5E /* MannerCamera4KApp.swift in Sources */,
+				1BA62D588616E0C9C40E05D7 /* NightModeProcessor.swift in Sources */,
 				BBFA9A4907E7AA2EF1E172E1 /* PhotoLibraryManager.swift in Sources */,
 				D16B3B2A2D625F0C85AA419A /* SilentPhotoCapturer.swift in Sources */,
 				8679ECD63441312C4C358428 /* StorageChecker.swift in Sources */,
