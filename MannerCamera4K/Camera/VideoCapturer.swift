@@ -26,7 +26,9 @@ final class VideoCapturer: NSObject {
             .appendingPathComponent(UUID().uuidString)
             .appendingPathExtension("mov")
 
+        // プリセット変更とオーディオ入力を1回のconfigurationにまとめ、黒画面を最小化
         session.beginConfiguration()
+
         switch resolution {
         case .fourK:
             if session.canSetSessionPreset(.hd4K3840x2160) {
@@ -37,9 +39,11 @@ final class VideoCapturer: NSObject {
                 session.sessionPreset = .hd1920x1080
             }
         }
-        session.commitConfiguration()
 
+        // オーディオ入力も同じconfiguration内で追加
         configureAudioInput(enabled: recordAudio)
+
+        session.commitConfiguration()
 
         movieOutput.startRecording(to: outputURL, recordingDelegate: self)
         return outputURL

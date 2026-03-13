@@ -305,12 +305,18 @@ final class CameraManager: NSObject {
         // 録画中はビデオデータ出力を無効化（MovieFileOutputとの競合防止）
         videoDataOutput.setSampleBufferDelegate(nil, queue: nil)
 
-        VideoCapturer.configureAudioSession()
-        let capturer = VideoCapturer(movieOutput: movieOutput, session: session)
-        _ = capturer.startRecording(resolution: settings.videoResolution, recordAudio: settings.recordAudio)
         captureState = .recording
         recordingDuration = 0
+
+        let capturer = VideoCapturer(movieOutput: movieOutput, session: session)
         _currentVideoCapturer = capturer
+
+        // セッション変更をバックグラウンドで実行（メインスレッドブロック防止）
+        sessionQueue.async {
+            VideoCapturer.configureAudioSession()
+            _ = capturer.startRecording(resolution: settings.videoResolution, recordAudio: settings.recordAudio)
+        }
+
         recordingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.recordingDuration += 0.1

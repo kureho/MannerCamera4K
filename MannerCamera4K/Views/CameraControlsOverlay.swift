@@ -112,7 +112,7 @@ struct CameraControlsOverlay: View {
     }
 
     private var modeSelector: some View {
-        HStack(spacing: 24) {
+        HStack(spacing: 0) {
             ForEach(CameraMode.allCases, id: \.self) { mode in
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) {
@@ -122,6 +122,9 @@ struct CameraControlsOverlay: View {
                     Text(mode.displayName)
                         .font(.system(size: 15, weight: camera.currentMode == mode ? .bold : .regular))
                         .foregroundStyle(camera.currentMode == mode ? .yellow : .white.opacity(0.7))
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 12)
+                        .contentShape(Rectangle())
                 }
             }
         }
