@@ -78,6 +78,27 @@ final class CameraManager: NSObject {
         Task { @MainActor in
             self.availableLenses = DeviceCapability.availableLenses(for: self.currentPosition)
         }
+
+        // Important 5: セッション中断通知の追加
+        NotificationCenter.default.addObserver(
+            forName: .AVCaptureSessionWasInterrupted,
+            object: session,
+            queue: .main
+        ) { [weak self] _ in
+            if self?.captureState == .recording {
+                self?.stopRecording()
+            }
+        }
+
+        NotificationCenter.default.addObserver(
+            forName: .AVCaptureSessionInterruptionEnded,
+            object: session,
+            queue: .main
+        ) { [weak self] _ in
+            self?.sessionQueue.async {
+                self?.session.startRunning()
+            }
+        }
     }
 
     // MARK: - Lens Switching
@@ -180,12 +201,15 @@ final class CameraManager: NSObject {
 
         captureState = .capturing
 
+        // Critical 1: nightModeEnabled と nightModeProcessor を SilentPhotoCapturer に渡す
         let capturer = SilentPhotoCapturer(
             photoOutput: photoOutput,
             settings: settings,
             currentDevice: currentDevice,
             currentLens: currentLens,
-            cameraPosition: currentPosition
+            cameraPosition: currentPosition,
+            nightModeEnabled: isNightModeEnabled,
+            nightModeProcessor: nightModeProcessor
         )
 
         Task {
@@ -213,18 +237,25 @@ final class CameraManager: NSObject {
             return
         }
 
+        // Critical 3: マイク権限が未決定の場合は先にリクエストしてからdeadlock回避
+        if settings.recordAudio && AVCaptureDevice.authorizationStatus(for: .audio) == .notDetermined {
+            AVCaptureDevice.requestAccess(for: .audio) { _ in
+                Task { @MainActor in
+                    self.beginRecording(settings: settings)
+                }
+            }
+        } else {
+            beginRecording(settings: settings)
+        }
+    }
+
+    private func beginRecording(settings: CameraSettings) {
         VideoCapturer.configureAudioSession()
-
         let capturer = VideoCapturer(movieOutput: movieOutput, session: session)
-        _ = capturer.startRecording(
-            resolution: settings.videoResolution,
-            recordAudio: settings.recordAudio
-        )
-
+        _ = capturer.startRecording(resolution: settings.videoResolution, recordAudio: settings.recordAudio)
         captureState = .recording
         recordingDuration = 0
         _currentVideoCapturer = capturer
-
         recordingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.recordingDuration += 0.1

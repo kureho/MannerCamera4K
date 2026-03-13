@@ -6,6 +6,8 @@ struct CameraView: View {
     @State private var showMuteTip = false
     @State private var focusPoint: CGPoint?
     @State private var showFocusIndicator = false
+    // Important 8: ズームの指数的増加バグ修正用ベースズーム
+    @State private var baseZoom: CGFloat = 1.0
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -61,7 +63,11 @@ struct CameraView: View {
                     .gesture(
                         MagnifyGesture()
                             .onChanged { value in
-                                camera.setZoom(camera.zoomFactor * value.magnification)
+                                // Important 8: baseZoom を基準にして指数的増加を防止
+                                camera.setZoom(baseZoom * value.magnification)
+                            }
+                            .onEnded { _ in
+                                baseZoom = camera.zoomFactor
                             }
                     )
             }

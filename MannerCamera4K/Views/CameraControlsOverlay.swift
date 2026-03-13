@@ -67,6 +67,8 @@ struct CameraControlsOverlay: View {
                                     .fill(camera.currentLens == lens ? .white.opacity(0.2) : .clear)
                             )
                     }
+                    // Important 13: 録画中はレンズ切替を無効化
+                    .disabled(camera.captureState == .recording)
                 }
             }
         }
@@ -102,6 +104,8 @@ struct CameraControlsOverlay: View {
                         .foregroundStyle(.white)
                         .frame(width: 60, height: 44)
                 }
+                // Important 13: 録画中はカメラ切替を無効化
+                .disabled(camera.captureState == .recording)
             }
             .padding(.horizontal, 32)
         }

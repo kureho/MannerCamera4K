@@ -62,22 +62,10 @@ final class VideoCapturer: NSObject {
 
         guard enabled else { return }
 
-        let status = AVCaptureDevice.authorizationStatus(for: .audio)
-        switch status {
-        case .authorized:
-            addAudioInput()
-        case .notDetermined:
-            let semaphore = DispatchSemaphore(value: 0)
-            AVCaptureDevice.requestAccess(for: .audio) { granted in
-                if granted {
-                    self.addAudioInput()
-                }
-                semaphore.signal()
-            }
-            semaphore.wait()
-        default:
-            break
-        }
+        // Critical 3: DispatchSemaphore を削除してデッドロック回避
+        // 権限リクエストは CameraManager.startRecording で事前に行う
+        guard AVCaptureDevice.authorizationStatus(for: .audio) == .authorized else { return }
+        addAudioInput()
     }
 
     private func addAudioInput() {

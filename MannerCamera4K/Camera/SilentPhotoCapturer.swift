@@ -10,18 +10,26 @@ final class SilentPhotoCapturer: NSObject {
     private let cameraPosition: AVCaptureDevice.Position
     private var continuation: CheckedContinuation<Void, Error>?
 
+    // Critical 1: ナイトモード処理用プロパティ
+    private let nightModeEnabled: Bool
+    private let nightModeProcessor: NightModeProcessor?
+
     init(
         photoOutput: AVCapturePhotoOutput,
         settings: CameraSettings,
         currentDevice: AVCaptureDevice?,
         currentLens: LensType,
-        cameraPosition: AVCaptureDevice.Position
+        cameraPosition: AVCaptureDevice.Position,
+        nightModeEnabled: Bool = false,
+        nightModeProcessor: NightModeProcessor? = nil
     ) {
         self.photoOutput = photoOutput
         self.settings = settings
         self.currentDevice = currentDevice
         self.currentLens = currentLens
         self.cameraPosition = cameraPosition
+        self.nightModeEnabled = nightModeEnabled
+        self.nightModeProcessor = nightModeProcessor
     }
 
     func capturePhoto(flashEnabled: Bool, nightMode: Bool) async throws {
@@ -90,26 +98,35 @@ extension SilentPhotoCapturer: AVCapturePhotoCaptureDelegate {
         didFinishProcessingPhoto photo: AVCapturePhoto,
         error: Error?
     ) {
+        // Critical 2: continuation を先に nil にして二重呼び出しを防止
+        guard let cont = continuation else { return }
+        continuation = nil
+
         if let error {
-            continuation?.resume(throwing: error)
-            continuation = nil
+            cont.resume(throwing: error)
             return
         }
 
         guard let imageData = photo.fileDataRepresentation() else {
-            continuation?.resume(throwing: CaptureError.noImageData)
-            continuation = nil
+            cont.resume(throwing: CaptureError.noImageData)
             return
+        }
+
+        // Critical 1: ナイトモードのポスト処理を写真撮影パスで適用
+        let finalData: Data
+        if nightModeEnabled, let processor = nightModeProcessor, let processed = processor.processImage(imageData) {
+            finalData = processed
+        } else {
+            finalData = imageData
         }
 
         Task {
             do {
-                try await PhotoLibraryManager.savePhoto(imageData)
-                continuation?.resume()
+                try await PhotoLibraryManager.savePhoto(finalData)
+                cont.resume()
             } catch {
-                continuation?.resume(throwing: error)
+                cont.resume(throwing: error)
             }
-            continuation = nil
         }
     }
 
