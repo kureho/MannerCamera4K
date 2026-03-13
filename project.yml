@@ -47,5 +47,6 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.example.MannerCamera4KTests
         SWIFT_VERSION: "5.9"
+        GENERATE_INFOPLIST_FILE: YES
     dependencies:
       - target: MannerCamera4K
