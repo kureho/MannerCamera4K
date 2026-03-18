@@ -10,6 +10,7 @@ struct CameraView: View {
     // Important 8: ズームの指数的増加バグ修正用ベースズーム
     @State private var baseZoom: CGFloat = 1.0
     @State private var showShutterFlash = false
+    @State private var showCaptureConfirm = false
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -127,6 +128,30 @@ struct CameraView: View {
                     .zIndex(10)
             }
 
+            if showCaptureConfirm {
+                VStack {
+                    HStack {
+                        Spacer()
+                        HStack(spacing: 6) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 18))
+                            Text("撮影しました")
+                                .font(.system(size: 15, weight: .semibold))
+                        }
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(.black.opacity(0.7), in: Capsule())
+                        .padding(.trailing, 16)
+                        .padding(.top, 56)
+                    }
+                    Spacer()
+                }
+                .allowsHitTesting(false)
+                .transition(.opacity)
+                .zIndex(11)
+            }
+
             CameraControlsOverlay(
                 camera: camera,
                 settings: settings,
@@ -143,12 +168,24 @@ struct CameraView: View {
     private func handleCapture() {
         switch camera.currentMode {
         case .photo:
+            // 2.5.14: 白フラッシュ（全関係者に撮影を通知するインジケーター）
             withAnimation(.easeOut(duration: 0.05)) {
                 showShutterFlash = true
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                withAnimation(.easeIn(duration: 0.12)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                withAnimation(.easeIn(duration: 0.2)) {
                     showShutterFlash = false
+                }
+            }
+            // 2.5.14: 撮影完了確認バッジ（フラッシュ後に1.5秒表示）
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                withAnimation(.easeOut(duration: 0.15)) {
+                    showCaptureConfirm = true
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.85) {
+                withAnimation(.easeIn(duration: 0.3)) {
+                    showCaptureConfirm = false
                 }
             }
             camera.capturePhoto(settings: settings)
