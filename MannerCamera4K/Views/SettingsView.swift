@@ -17,16 +17,15 @@ struct SettingsView: View {
                     }
                 }
 
-                if DeviceCapability.supports48MP() {
-                    Picker("解像度", selection: Binding(
-                        get: { settings.photoResolution },
-                        set: { settings.photoResolution = $0 }
-                    )) {
-                        ForEach(PhotoResolution.allCases) { res in
-                            Text(res.displayName).tag(res)
-                        }
-                    }
+                HStack {
+                    Text("解像度")
+                    Spacer()
+                    Text("12MP")
+                        .foregroundStyle(.secondary)
                 }
+                Text("サイレント撮影では12MPで撮影されます")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             Section("動画") {

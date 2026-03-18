@@ -11,7 +11,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleDisplayName</key>
-	<string>マナーカメラ 4K</string>
+	<string>マナーカメラ</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
@@ -31,11 +31,10 @@
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 	</dict>
+	<key>UIUserInterfaceStyle</key>
+	<string>Dark</string>
 	<key>UILaunchScreen</key>
-	<dict>
-		<key>UIColorName</key>
-		<string></string>
-	</dict>
+	<dict/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

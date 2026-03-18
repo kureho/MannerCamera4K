@@ -5,8 +5,6 @@ import UIKit
 
 final class NightModeProcessor {
 
-    private let context = CIContext()
-
     func configureDevice(_ device: AVCaptureDevice) {
         do {
             try device.lockForConfiguration()
@@ -15,11 +13,13 @@ final class NightModeProcessor {
                 device.automaticallyEnablesLowLightBoostWhenAvailable = true
             }
 
+            // 1/15秒で15fps維持（1/3秒だと3fpsでカクつく）
             let maxExposure = min(
-                CMTimeMakeWithSeconds(1.0 / 3.0, preferredTimescale: 1000),
+                CMTimeMakeWithSeconds(1.0 / 15.0, preferredTimescale: 1000),
                 device.activeFormat.maxExposureDuration
             )
-            let targetISO = min(device.activeFormat.maxISO, 1600)
+            // 露出時間を短くした分、ISOを上げて明るさを補う
+            let targetISO = min(device.activeFormat.maxISO, 3200)
 
             device.setExposureModeCustom(
                 duration: maxExposure,
@@ -42,9 +42,8 @@ final class NightModeProcessor {
         }
     }
 
-    func processImage(_ imageData: Data) -> Data? {
-        guard let ciImage = CIImage(data: imageData) else { return nil }
-
+    /// CIImage を直接受け取ってフィルタ適用（エンコード/デコードの往復を省略）
+    func processCIImage(_ ciImage: CIImage) -> CIImage {
         var processed = ciImage
 
         if let noiseReduction = CIFilter(name: "CINoiseReduction") {
@@ -73,11 +72,7 @@ final class NightModeProcessor {
             }
         }
 
-        guard let cgImage = context.createCGImage(processed, from: processed.extent) else {
-            return nil
-        }
-        let uiImage = UIImage(cgImage: cgImage)
-        return uiImage.heicData() ?? uiImage.jpegData(compressionQuality: 0.95)
+        return processed
     }
 }
 

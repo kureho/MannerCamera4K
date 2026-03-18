@@ -5,6 +5,7 @@ final class VideoCapturer: NSObject {
     private let movieOutput: AVCaptureMovieFileOutput
     private let session: AVCaptureSession
     private var continuation: CheckedContinuation<URL, Error>?
+    private let continuationLock = NSLock()
 
     init(movieOutput: AVCaptureMovieFileOutput, session: AVCaptureSession) {
         self.movieOutput = movieOutput
@@ -51,9 +52,34 @@ final class VideoCapturer: NSObject {
 
     func stopRecording() async throws -> URL {
         return try await withCheckedThrowingContinuation { continuation in
+            continuationLock.lock()
+            if self.continuation != nil {
+                continuationLock.unlock()
+                continuation.resume(throwing: CancellationError())
+                return
+            }
             self.continuation = continuation
-            movieOutput.stopRecording()
+            continuationLock.unlock()
+            if movieOutput.isRecording {
+                movieOutput.stopRecording()
+            } else {
+                // 録画が実際に行われていない場合は即座にエラーで resume
+                continuationLock.lock()
+                let cont = self.continuation
+                self.continuation = nil
+                continuationLock.unlock()
+                cont?.resume(throwing: CancellationError())
+            }
         }
+    }
+
+    /// セッション中断時など、外部から continuation を強制的にキャンセルする
+    func cancelIfNeeded() {
+        continuationLock.lock()
+        let cont = continuation
+        continuation = nil
+        continuationLock.unlock()
+        cont?.resume(throwing: CancellationError())
     }
 
     private func configureAudioInput(enabled: Bool) {
@@ -83,13 +109,22 @@ final class VideoCapturer: NSObject {
 
 extension VideoCapturer: AVCaptureFileOutputRecordingDelegate {
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
-        if let error {
-            continuation?.resume(throwing: error)
-            continuation = nil
+        continuationLock.lock()
+        let cont = continuation
+        continuation = nil
+        continuationLock.unlock()
+
+        guard let cont else {
+            // continuation が既に消費済み（cancelIfNeeded 等）→ 一時ファイルを削除
             try? FileManager.default.removeItem(at: outputFileURL)
             return
         }
-        continuation?.resume(returning: outputFileURL)
-        continuation = nil
+
+        if let error {
+            cont.resume(throwing: error)
+            try? FileManager.default.removeItem(at: outputFileURL)
+        } else {
+            cont.resume(returning: outputFileURL)
+        }
     }
 }

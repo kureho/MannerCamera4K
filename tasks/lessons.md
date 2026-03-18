@@ -28,3 +28,51 @@
 ### UI レイアウト
 - HStack で中央のボタンを固定位置にする場合、左右の要素の幅を揃える
 - 状態によって表示が切り替わる要素は、非表示時も同じ frame サイズの placeholder を置く
+
+### SwiftUI ジェスチャーとボタンの競合
+- `DragGesture(minimumDistance: 0)` は全タッチイベントを消費し、ZStack 上位のボタンのタップを奪う
+- タップ位置が必要な場合は `SpatialTapGesture` を使う（ボタンと共存可能）
+- この問題は特定の状態（録画中など）でのみ再現するため見落としやすい
+
+### CIContext の再利用
+- `CIContext()` は重いオブジェクトなので毎回生成しない
+- インスタンス変数として保持して再利用する
+
+## App Store 審査
+
+### Guideline 2.5.14 — 撮影インジケーター
+- 無音カメラアプリでは、撮影時に**被写体にも見える視覚的インジケーター**が必須
+- `Color.black` のフラッシュはNG（「go blank during recording」と判定される）
+- `Color.white` の白フラッシュが適切（Microsoft Pix等と同様の方式）
+- インジケーターは無効化できてはいけない
+
+### Guideline 2.3.7 — スクリーンショットに価格を入れない
+- App Store のスクリーンショットに具体的な価格（¥400等）を含めるとリジェクト
+- 「買い切り」「広告なし」等の表現はOK、金額はNG
+- 価格は説明文（Description）に記載する
+
+### Guideline 1.5 — サポートURL
+- FAQ だけでは不十分。ユーザーが**質問を送信できる手段**が必要
+- お問い合わせフォーム or メールアドレスを必ず含める
+- GitHub Issues だけだと不十分な場合がある
+
+### 共有サポートサイト
+- `support-desk.vercel.app` で複数アプリ共通のお問い合わせフォームを運用
+- DB は stream-schedule と同じ Supabase を共用（テーブル名 `support_submissions` で分離）
+- 新アプリ追加時は `src/lib/products.ts` にエントリを追加するだけ
+
+## プロセス・スキル運用
+
+### スキルの誤適用に注意
+- Web 専用スキル（`frontend-design`, `web-design-guidelines`, `vercel-react-best-practices`）を iOS プロジェクトに適用しない
+- → `design-skills.md` にプラットフォーム適用テーブルを追加、プロジェクト CLAUDE.md で明示除外で対策済み
+
+### バグ修正は systematic-debugging → TDD の順で行う
+- 場当たり的に修正すると「修正 → 新バグ発生 → 修正 → 新バグ」のサイクルに陥る
+- 根本原因: CameraManager のスレッド安全性が構造的に保証されていない（`@Observable` だが `@MainActor` なし）
+- **修正前に必ず `systematic-debugging` で根本原因を特定し、`TDD` でテストを書いてから修正する**
+
+### sessionQueue.async クロージャでの値キャプチャ
+- main thread のプロパティを `sessionQueue.async { }` 内で直接参照すると、実行時に値が変わっている可能性がある
+- dispatch 前にローカル変数にキャプチャしてからクロージャに渡す
+- 例: `let nightModeOn = isNightModeEnabled` → `sessionQueue.async { ... nightModeOn ... }`

@@ -25,6 +25,8 @@ struct CameraControlsOverlay: View {
                     .foregroundStyle(camera.isFlashEnabled ? .yellow : .white)
                     .frame(width: 44, height: 44)
             }
+            .opacity(camera.currentPosition == .back ? 1 : 0)
+            .disabled(camera.currentPosition != .back || camera.captureState != .idle)
 
             Spacer()
 
@@ -36,6 +38,7 @@ struct CameraControlsOverlay: View {
                     .foregroundStyle(camera.isNightModeEnabled ? .yellow : .white)
                     .frame(width: 44, height: 44)
             }
+            .disabled(camera.captureState != .idle)
 
             Spacer()
 
@@ -47,6 +50,7 @@ struct CameraControlsOverlay: View {
                     .foregroundStyle(.white)
                     .frame(width: 44, height: 44)
             }
+            .disabled(camera.captureState != .idle)
         }
         .padding(.horizontal, 24)
     }
@@ -68,7 +72,7 @@ struct CameraControlsOverlay: View {
                             )
                     }
                     // Important 13: 録画中はレンズ切替を無効化
-                    .disabled(camera.captureState == .recording)
+                    .disabled(camera.captureState != .idle)
                 }
             }
         }
@@ -81,7 +85,8 @@ struct CameraControlsOverlay: View {
 
             HStack {
                 if camera.currentMode == .video && camera.captureState == .recording {
-                    recordingTimeLabel
+                    // 録画時間表示を独立Viewに分離し、タイマー更新がShutterButtonの再レンダリングを引き起こさないようにする
+                    RecordingTimeLabelView(camera: camera)
                 } else {
                     Color.clear.frame(width: 100, height: 44)
                 }
@@ -105,7 +110,7 @@ struct CameraControlsOverlay: View {
                         .frame(width: 100, height: 44)
                 }
                 // Important 13: 録画中はカメラ切替を無効化
-                .disabled(camera.captureState == .recording)
+                .disabled(camera.captureState != .idle)
             }
             .padding(.horizontal, 32)
         }
@@ -126,11 +131,18 @@ struct CameraControlsOverlay: View {
                         .padding(.vertical, 12)
                         .contentShape(Rectangle())
                 }
+                .disabled(camera.captureState != .idle)
             }
         }
     }
+}
 
-    private var recordingTimeLabel: some View {
+/// 録画時間表示を独立Viewに分離
+/// recordingDuration の高頻度更新（0.1秒ごと）がShutterButtonの再レンダリングに波及するのを防ぐ
+struct RecordingTimeLabelView: View {
+    let camera: CameraManager
+
+    var body: some View {
         HStack(spacing: 6) {
             Circle()
                 .fill(.red)

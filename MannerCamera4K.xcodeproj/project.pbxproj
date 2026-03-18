@@ -25,7 +25,6 @@
 		A331012E491F0257B4A85A5E /* MannerCamera4KApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB92C44BA503FA7D14D37106 /* MannerCamera4KApp.swift */; };
 		AED5119A57EDD6AD2D6ACAEE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CD889AA40AFCE6CECEC81D5 /* SettingsView.swift */; };
 		BBFA9A4907E7AA2EF1E172E1 /* PhotoLibraryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B218031607576ED6FDFBCB /* PhotoLibraryManager.swift */; };
-		D16B3B2A2D625F0C85AA419A /* SilentPhotoCapturer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2831D7ED571D6BFC832D077A /* SilentPhotoCapturer.swift */; };
 		D6D3DA2593198D2AA2424905 /* CaptureState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5566D63EFA7B4F0CEDD027 /* CaptureState.swift */; };
 		E7F132D4326EF41D10CF3B8F /* PermissionDeniedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2402333C63236CA52C5CFEF0 /* PermissionDeniedView.swift */; };
 		F0C78ACD1510B80AB9C74ACB /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF73C554131AE08A7D5ABA48 /* CameraView.swift */; };
@@ -50,7 +49,6 @@
 		1BFA4ED59D2C6ED2A349374B /* MannerCamera4KTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MannerCamera4KTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1F19DC062B5D8F313F836718 /* ShutterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShutterButton.swift; sourceTree = "<group>"; };
 		2402333C63236CA52C5CFEF0 /* PermissionDeniedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionDeniedView.swift; sourceTree = "<group>"; };
-		2831D7ED571D6BFC832D077A /* SilentPhotoCapturer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SilentPhotoCapturer.swift; sourceTree = "<group>"; };
 		2A6AE2B907F8BC93600B6BFB /* NightModeProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NightModeProcessor.swift; sourceTree = "<group>"; };
 		2F86228DAFE49EA817FE1F5D /* CameraControlsOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraControlsOverlay.swift; sourceTree = "<group>"; };
 		3C1995A8E2B7C951A6214D86 /* CameraMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraMode.swift; sourceTree = "<group>"; };
@@ -129,7 +127,6 @@
 			children = (
 				88E5D16E5B8215F4B97747C6 /* CameraManager.swift */,
 				2A6AE2B907F8BC93600B6BFB /* NightModeProcessor.swift */,
-				2831D7ED571D6BFC832D077A /* SilentPhotoCapturer.swift */,
 				8C914B0ECB8FE5A5E21B7A61 /* VideoCapturer.swift */,
 			);
 			path = Camera;
@@ -275,7 +272,6 @@
 				BBFA9A4907E7AA2EF1E172E1 /* PhotoLibraryManager.swift in Sources */,
 				AED5119A57EDD6AD2D6ACAEE /* SettingsView.swift in Sources */,
 				81E0A695E1083DBC80B13919 /* ShutterButton.swift in Sources */,
-				D16B3B2A2D625F0C85AA419A /* SilentPhotoCapturer.swift in Sources */,
 				8679ECD63441312C4C358428 /* StorageChecker.swift in Sources */,
 				FF601F9ACD485F4D8FF365EB /* VideoCapturer.swift in Sources */,
 			);
@@ -308,7 +304,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = L455WPL8QZ;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = MannerCamera4K/Info.plist;
@@ -330,7 +326,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = L455WPL8QZ;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = MannerCamera4K/Info.plist;

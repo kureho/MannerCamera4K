@@ -3,8 +3,9 @@ import Photos
 import SwiftUI
 
 @Observable
+@MainActor
 final class CameraManager: NSObject {
-    // MARK: - Public State
+    // MARK: - Public State (main-actor-isolated — SwiftUI から安全にアクセス可能)
     var captureState: CaptureState = .idle
     var currentMode: CameraMode = .photo
     var currentLens: LensType = .wide
@@ -16,30 +17,50 @@ final class CameraManager: NSObject {
     var zoomFactor: CGFloat = 1.0
     var recordingDuration: TimeInterval = 0
     var showStorageAlert: Bool = false
+    var showSaveErrorAlert: Bool = false
 
-    // MARK: - Internal
-    let session = AVCaptureSession()
-    var currentDevice: AVCaptureDevice?
-    private var deviceInput: AVCaptureDeviceInput?
-    let photoOutput = AVCapturePhotoOutput()
-    let movieOutput = AVCaptureMovieFileOutput()
-    let videoDataOutput = AVCaptureVideoDataOutput()
+    // MARK: - Camera Hardware (nonisolated — sessionQueue/videoDataQueue からアクセス)
+    nonisolated(unsafe) let session = AVCaptureSession()
+    nonisolated(unsafe) var currentDevice: AVCaptureDevice?
+    nonisolated(unsafe) private var deviceInput: AVCaptureDeviceInput?
+    nonisolated(unsafe) let photoOutput = AVCapturePhotoOutput()
+    nonisolated(unsafe) let movieOutput = AVCaptureMovieFileOutput()
+    nonisolated(unsafe) let videoDataOutput = AVCaptureVideoDataOutput()
     private let sessionQueue = DispatchQueue(label: "camera.session.queue")
     private let videoDataQueue = DispatchQueue(label: "camera.videodata.queue")
+    nonisolated(unsafe) private let nightModeProcessor = NightModeProcessor()
+    nonisolated(unsafe) private let ciContext = CIContext()
+    nonisolated(unsafe) private var isSessionConfigured = false
 
-    private var recordingTimer: Timer?
-    private let nightModeProcessor = NightModeProcessor()
+    // 無音フレームキャプチャ用（videoDataQueue からのみアクセスすること）
+    nonisolated(unsafe) private var _frameCaptureCompletion: ((CMSampleBuffer) -> Void)?
 
-    // 無音フレームキャプチャ用
-    private var frameCaptureCompletion: ((CMSampleBuffer) -> Void)?
+    // MARK: - Recording State (nonisolated(unsafe) — deinit からのアクセスに必要)
+    nonisolated(unsafe) private var recordingTimer: Timer?
+    nonisolated(unsafe) private var recordingStartDate: Date?
+    nonisolated(unsafe) private var notificationObservers: [Any] = []
+
+    private var _currentVideoCapturer: VideoCapturer?
+    private var isRecordingStarted = false
+
+    deinit {
+        recordingTimer?.invalidate()
+        for observer in notificationObservers {
+            NotificationCenter.default.removeObserver(observer)
+        }
+    }
 
     // MARK: - Setup
     func checkPermission() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
-            isCameraPermissionGranted = true
-            sessionQueue.async { self.setupSession() }
-            PHPhotoLibrary.requestAuthorization(for: .addOnly) { _ in }
+            if !isCameraPermissionGranted {
+                isCameraPermissionGranted = true
+                sessionQueue.async { self.setupSession() }
+                PHPhotoLibrary.requestAuthorization(for: .addOnly) { _ in }
+            } else {
+                startSession()
+            }
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 Task { @MainActor in
@@ -55,7 +76,10 @@ final class CameraManager: NSObject {
         }
     }
 
-    private func setupSession() {
+    nonisolated private func setupSession() {
+        guard !isSessionConfigured else { return }
+        isSessionConfigured = true
+
         session.beginConfiguration()
         session.sessionPreset = .photo
 
@@ -95,21 +119,23 @@ final class CameraManager: NSObject {
         session.commitConfiguration()
         session.startRunning()
 
+        let position: AVCaptureDevice.Position = .back
         Task { @MainActor in
-            self.availableLenses = DeviceCapability.availableLenses(for: self.currentPosition)
+            self.availableLenses = DeviceCapability.availableLenses(for: position)
         }
 
-        NotificationCenter.default.addObserver(
+        let interruptionObserver = NotificationCenter.default.addObserver(
             forName: .AVCaptureSessionWasInterrupted,
             object: session,
             queue: .main
         ) { [weak self] _ in
-            if self?.captureState == .recording {
-                self?.stopRecording()
+            guard let self else { return }
+            Task { @MainActor in
+                self.handleSessionInterruption()
             }
         }
 
-        NotificationCenter.default.addObserver(
+        let resumeObserver = NotificationCenter.default.addObserver(
             forName: .AVCaptureSessionInterruptionEnded,
             object: session,
             queue: .main
@@ -118,13 +144,49 @@ final class CameraManager: NSObject {
                 self?.session.startRunning()
             }
         }
+
+        notificationObservers = [interruptionObserver, resumeObserver]
+    }
+
+    private func handleSessionInterruption() {
+        if captureState == .recording {
+            recordingTimer?.invalidate()
+            recordingTimer = nil
+            recordingStartDate = nil
+            _currentVideoCapturer?.cancelIfNeeded()
+            _currentVideoCapturer = nil
+            isRecordingStarted = false
+            captureState = .idle
+            recordingDuration = 0
+            sessionQueue.async {
+                self.session.beginConfiguration()
+                self.session.sessionPreset = .photo
+                self.session.commitConfiguration()
+                self.videoDataOutput.setSampleBufferDelegate(self, queue: self.videoDataQueue)
+            }
+        } else if captureState == .capturing {
+            videoDataQueue.async {
+                self._frameCaptureCompletion = nil
+            }
+            captureState = .idle
+            // トーチが点灯中ならOFF
+            if isFlashEnabled, let device = currentDevice, device.hasTorch {
+                sessionQueue.async {
+                    try? device.lockForConfiguration()
+                    device.torchMode = .off
+                    device.unlockForConfiguration()
+                }
+            }
+        }
     }
 
     // MARK: - Lens Switching
     func switchLens(to lens: LensType) {
         guard lens != currentLens else { return }
+        let position = currentPosition
+        let nightModeOn = isNightModeEnabled
         sessionQueue.async {
-            guard let newDevice = DeviceCapability.device(for: lens, position: self.currentPosition),
+            guard let newDevice = DeviceCapability.device(for: lens, position: position),
                   let newInput = try? AVCaptureDeviceInput(device: newDevice) else { return }
 
             self.session.beginConfiguration()
@@ -135,6 +197,9 @@ final class CameraManager: NSObject {
                 self.session.addInput(newInput)
                 self.deviceInput = newInput
                 self.currentDevice = newDevice
+                if nightModeOn {
+                    self.nightModeProcessor.configureDevice(newDevice)
+                }
                 Task { @MainActor in
                     self.currentLens = lens
                     self.zoomFactor = 1.0
@@ -147,6 +212,7 @@ final class CameraManager: NSObject {
     // MARK: - Camera Position Toggle
     func toggleCameraPosition() {
         let newPosition: AVCaptureDevice.Position = currentPosition == .back ? .front : .back
+        let nightModeOn = isNightModeEnabled
         sessionQueue.async {
             guard let newDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: newPosition),
                   let newInput = try? AVCaptureDeviceInput(device: newDevice) else { return }
@@ -159,11 +225,17 @@ final class CameraManager: NSObject {
                 self.session.addInput(newInput)
                 self.deviceInput = newInput
                 self.currentDevice = newDevice
+                if nightModeOn {
+                    self.nightModeProcessor.configureDevice(newDevice)
+                }
                 Task { @MainActor in
                     self.currentPosition = newPosition
                     self.currentLens = .wide
                     self.availableLenses = DeviceCapability.availableLenses(for: newPosition)
                     self.zoomFactor = 1.0
+                    if newPosition == .front {
+                        self.isFlashEnabled = false
+                    }
                 }
             }
             self.session.commitConfiguration()
@@ -220,68 +292,97 @@ final class CameraManager: NSObject {
 
         captureState = .capturing
 
-        // フラッシュ: トーチで代用
-        if isFlashEnabled, let device = currentDevice, device.hasTorch {
-            try? device.lockForConfiguration()
-            device.torchMode = .on
-            device.unlockForConfiguration()
-        }
+        let flashEnabled = isFlashEnabled
+        let device = currentDevice
+        let nightModeOn = isNightModeEnabled
+        let photoFormat = settings.photoFormat
 
-        // 次のビデオフレームをキャプチャ
-        frameCaptureCompletion = { [weak self] sampleBuffer in
-            guard let self else { return }
-            self.frameCaptureCompletion = nil
-
-            // トーチOFF
-            if self.isFlashEnabled, let device = self.currentDevice, device.hasTorch {
+        // フラッシュ: トーチで代用（デバイス操作は sessionQueue で実行）
+        if flashEnabled, let device, device.hasTorch {
+            sessionQueue.async {
                 try? device.lockForConfiguration()
-                device.torchMode = .off
+                device.torchMode = .on
                 device.unlockForConfiguration()
             }
+        }
 
-            // フレームを画像データに変換
-            guard let imageData = self.imageDataFromSampleBuffer(sampleBuffer, settings: settings) else {
-                Task { @MainActor in self.captureState = .idle }
-                return
+        // タイムアウト: 3秒以内にフレームが取得できなければ .idle に戻す
+        Task { [weak self] in
+            try? await Task.sleep(for: .seconds(3))
+            guard let self, self.captureState == .capturing else { return }
+            self.captureState = .idle
+            self.videoDataQueue.async {
+                self._frameCaptureCompletion = nil
             }
-
-            // ナイトモード処理
-            let finalData: Data
-            if self.isNightModeEnabled, let processed = self.nightModeProcessor.processImage(imageData) {
-                finalData = processed
-            } else {
-                finalData = imageData
-            }
-
-            // 保存
-            Task {
-                do {
-                    try await PhotoLibraryManager.savePhoto(finalData)
-                } catch {
-                    print("Photo save error: \(error)")
+            if flashEnabled, let device, device.hasTorch {
+                self.sessionQueue.async {
+                    try? device.lockForConfiguration()
+                    device.torchMode = .off
+                    device.unlockForConfiguration()
                 }
-                await MainActor.run { self.captureState = .idle }
             }
         }
-    }
 
-    private func imageDataFromSampleBuffer(_ sampleBuffer: CMSampleBuffer, settings: CameraSettings) -> Data? {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return nil }
-        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
-        let context = CIContext()
-        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return nil }
-        let uiImage = UIImage(cgImage: cgImage)
+        // 次のビデオフレームをキャプチャ（videoDataQueue で設定してデータ競合を防止）
+        videoDataQueue.async {
+            self._frameCaptureCompletion = { [weak self] sampleBuffer in
+                guard let self else { return }
+                self._frameCaptureCompletion = nil
 
-        if settings.photoFormat == .heif {
-            return uiImage.heicData() ?? uiImage.jpegData(compressionQuality: 0.95)
-        } else {
-            return uiImage.jpegData(compressionQuality: 0.95)
+                // トーチOFF（デバイス操作は sessionQueue で実行）
+                if flashEnabled, let device, device.hasTorch {
+                    self.sessionQueue.async {
+                        try? device.lockForConfiguration()
+                        device.torchMode = .off
+                        device.unlockForConfiguration()
+                    }
+                }
+
+                // フレームからCIImageを取得
+                guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+                    Task { @MainActor in self.captureState = .idle }
+                    return
+                }
+                var ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+
+                // ナイトモード処理
+                if nightModeOn {
+                    ciImage = self.nightModeProcessor.processCIImage(ciImage)
+                }
+
+                // CIImage → Data に変換
+                guard let cgImage = self.ciContext.createCGImage(ciImage, from: ciImage.extent) else {
+                    Task { @MainActor in self.captureState = .idle }
+                    return
+                }
+                let uiImage = UIImage(cgImage: cgImage)
+                let finalData: Data?
+                if photoFormat == .heif {
+                    finalData = uiImage.heicData() ?? uiImage.jpegData(compressionQuality: 0.95)
+                } else {
+                    finalData = uiImage.jpegData(compressionQuality: 0.95)
+                }
+
+                guard let imageData = finalData else {
+                    Task { @MainActor in self.captureState = .idle }
+                    return
+                }
+
+                // 保存
+                Task {
+                    do {
+                        try await PhotoLibraryManager.savePhoto(imageData)
+                    } catch {
+                        print("Photo save error: \(error)")
+                        await MainActor.run { self.showSaveErrorAlert = true }
+                    }
+                    await MainActor.run { self.captureState = .idle }
+                }
+            }
         }
     }
 
     // MARK: - Video Recording
-    private var _currentVideoCapturer: VideoCapturer?
-
     func startRecording(settings: CameraSettings) {
         guard captureState == .idle else { return }
 
@@ -311,15 +412,25 @@ final class CameraManager: NSObject {
         let capturer = VideoCapturer(movieOutput: movieOutput, session: session)
         _currentVideoCapturer = capturer
 
-        // セッション変更をバックグラウンドで実行（メインスレッドブロック防止）
+        let nightModeOn = isNightModeEnabled
+        let device = currentDevice
+        isRecordingStarted = false
         sessionQueue.async {
+            if nightModeOn, let device {
+                self.nightModeProcessor.resetDevice(device)
+            }
             VideoCapturer.configureAudioSession()
             _ = capturer.startRecording(resolution: settings.videoResolution, recordAudio: settings.recordAudio)
+            Task { @MainActor in
+                self.isRecordingStarted = true
+            }
         }
 
+        recordingStartDate = Date()
         recordingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             Task { @MainActor in
-                self?.recordingDuration += 0.1
+                guard let self, let start = self.recordingStartDate else { return }
+                self.recordingDuration = Date().timeIntervalSince(start)
             }
         }
     }
@@ -329,14 +440,46 @@ final class CameraManager: NSObject {
 
         recordingTimer?.invalidate()
         recordingTimer = nil
+        recordingStartDate = nil
+        _currentVideoCapturer = nil
+
+        let nightModeOn = isNightModeEnabled
+        let device = currentDevice
+
+        // 録画が実際に開始されていない場合はキャプチャラーをキャンセルしてセッション復元
+        guard isRecordingStarted else {
+            capturer.cancelIfNeeded()
+            captureState = .idle
+            recordingDuration = 0
+            sessionQueue.async {
+                // sessionQueue 上で録画開始がディスパッチ済みの場合に備え、録画中なら停止
+                if self.movieOutput.isRecording {
+                    self.movieOutput.stopRecording()
+                }
+                self.session.beginConfiguration()
+                self.session.sessionPreset = .photo
+                self.session.commitConfiguration()
+                self.videoDataOutput.setSampleBufferDelegate(self, queue: self.videoDataQueue)
+                if nightModeOn, let device {
+                    self.nightModeProcessor.configureDevice(device)
+                }
+            }
+            return
+        }
+        isRecordingStarted = false
 
         Task {
             do {
                 let url = try await capturer.stopRecording()
-                try await PhotoLibraryManager.saveVideo(at: url)
+                do {
+                    try await PhotoLibraryManager.saveVideo(at: url)
+                } catch {
+                    print("Video save error: \(error)")
+                    await MainActor.run { self.showSaveErrorAlert = true }
+                }
                 try? FileManager.default.removeItem(at: url)
             } catch {
-                print("Video save error: \(error)")
+                print("Recording stop error: \(error)")
             }
             await MainActor.run {
                 self.captureState = .idle
@@ -345,13 +488,13 @@ final class CameraManager: NSObject {
                     self.session.beginConfiguration()
                     self.session.sessionPreset = .photo
                     self.session.commitConfiguration()
-                    // 録画終了後にビデオデータ出力を再有効化
                     self.videoDataOutput.setSampleBufferDelegate(self, queue: self.videoDataQueue)
+                    if nightModeOn, let device {
+                        self.nightModeProcessor.configureDevice(device)
+                    }
                 }
             }
         }
-
-        _currentVideoCapturer = nil
     }
 
     // MARK: - Flash
@@ -362,10 +505,11 @@ final class CameraManager: NSObject {
     // MARK: - Night Mode
     func toggleNightMode() {
         isNightModeEnabled.toggle()
+        let enabled = isNightModeEnabled
         guard let device = currentDevice else { return }
 
         sessionQueue.async {
-            if self.isNightModeEnabled {
+            if enabled {
                 self.nightModeProcessor.configureDevice(device)
             } else {
                 self.nightModeProcessor.resetDevice(device)
@@ -393,9 +537,9 @@ final class CameraManager: NSObject {
 
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        // フレームキャプチャ要求がある場合のみ処理
-        if let completion = frameCaptureCompletion {
+    nonisolated func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        // フレームキャプチャ要求がある場合のみ処理（videoDataQueue 上で実行される）
+        if let completion = _frameCaptureCompletion {
             completion(sampleBuffer)
         }
     }
