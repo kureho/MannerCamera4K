@@ -6,8 +6,10 @@ struct CameraView: View {
     @State private var showMuteTip = false
     @State private var focusPoint: CGPoint?
     @State private var showFocusIndicator = false
+    @State private var focusID = UUID()
     // Important 8: ズームの指数的増加バグ修正用ベースズーム
     @State private var baseZoom: CGFloat = 1.0
+    @State private var showShutterFlash = false
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -31,20 +33,37 @@ struct CameraView: View {
         .onChange(of: scenePhase) { _, newPhase in
             switch newPhase {
             case .active:
-                camera.startSession()
-            case .inactive, .background:
+                // 権限の付与・取消の両方に対応（内部で startSession も行う）
+                camera.checkPermission()
+            case .background:
+                // バックグラウンド移行時のみ録画停止（.inactiveではコントロールセンター等で発火するため停止しない）
+                // stopRecording は内部で非同期に保存処理を行うため、stopSession は captureState が idle に戻ってから実行
                 if camera.captureState == .recording {
                     camera.stopRecording()
                 }
+                // 録画停止の非同期処理と競合しないよう sessionQueue 経由で順序を保証
                 camera.stopSession()
+            case .inactive:
+                break
             @unknown default:
                 break
             }
+        }
+        .onChange(of: camera.currentLens) {
+            baseZoom = 1.0
+        }
+        .onChange(of: camera.currentPosition) {
+            baseZoom = 1.0
         }
         .alert("ストレージ不足", isPresented: Bindable(camera).showStorageAlert) {
             Button("OK") {}
         } message: {
             Text("空き容量が不足しています。不要なファイルを削除してから再度お試しください。")
+        }
+        .alert("保存に失敗しました", isPresented: Bindable(camera).showSaveErrorAlert) {
+            Button("OK") {}
+        } message: {
+            Text("写真ライブラリへの保存に失敗しました。設定アプリから写真へのアクセスを許可してください。")
         }
     }
 
@@ -53,8 +72,11 @@ struct CameraView: View {
             GeometryReader { geo in
                 CameraPreviewView(session: camera.session)
                     .ignoresSafeArea()
+                    // 録画中・キャプチャ中はプレビューのタッチを完全に無効化
+                    // これにより録画停止ボタンへのタッチが確実に到達する
+                    .allowsHitTesting(camera.captureState == .idle)
                     .gesture(
-                        DragGesture(minimumDistance: 0)
+                        SpatialTapGesture()
                             .onEnded { value in
                                 camera.focus(at: value.location, in: geo.size)
                                 showFocusAt(value.location)
@@ -74,7 +96,9 @@ struct CameraView: View {
 
             if showFocusIndicator, let point = focusPoint {
                 FocusIndicator()
+                    .id(focusID)
                     .position(point)
+                    .allowsHitTesting(false)
             }
 
             if camera.captureState == .capturing && camera.isNightModeEnabled {
@@ -92,6 +116,15 @@ struct CameraView: View {
                     .background(.ultraThinMaterial, in: Capsule())
                     Spacer()
                 }
+                .allowsHitTesting(false)
+            }
+
+            if showShutterFlash {
+                Color.white
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+                    .zIndex(10)
             }
 
             CameraControlsOverlay(
@@ -102,6 +135,7 @@ struct CameraView: View {
 
             if showMuteTip {
                 muteTipOverlay
+                    .allowsHitTesting(false)
             }
         }
     }
@@ -109,6 +143,14 @@ struct CameraView: View {
     private func handleCapture() {
         switch camera.currentMode {
         case .photo:
+            withAnimation(.easeOut(duration: 0.05)) {
+                showShutterFlash = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                withAnimation(.easeIn(duration: 0.12)) {
+                    showShutterFlash = false
+                }
+            }
             camera.capturePhoto(settings: settings)
 
         case .video:
@@ -129,9 +171,14 @@ struct CameraView: View {
 
     private func showFocusAt(_ point: CGPoint) {
         focusPoint = point
+        focusID = UUID()
         showFocusIndicator = true
+        let currentID = focusID
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            withAnimation { showFocusIndicator = false }
+            // 新しいタップが発生していない場合のみ非表示にする
+            if focusID == currentID {
+                withAnimation { showFocusIndicator = false }
+            }
         }
     }
 
